@@ -9,7 +9,7 @@ import (
 )
 
 type Tag struct {
-	ID        string `gorm:"primaryKey"`
+	ID        string
 	Name      string
 	CreatedAt time.Time
 }

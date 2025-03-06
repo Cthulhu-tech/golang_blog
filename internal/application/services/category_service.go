@@ -57,7 +57,7 @@ func (s *categoryService) GetAllCategories(page, pageSize int) ([]query.Category
 
 	for _, category := range categoryList {
 		queryListResult = append(queryListResult, query.CategoryQueryListResult{
-			Result: []*common.CategoryResult{mapper.NewCategoryResultFromEntity(&category, totalRecords)},
+			Result: []*common.CategoryResult{mapper.NewCategoryResultFromEntity(category, totalRecords)},
 		})
 	}
 

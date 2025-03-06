@@ -9,7 +9,7 @@ import (
 )
 
 type Category struct {
-	ID        string `gorm:"primaryKey"`
+	ID        string
 	Name      string
 	CreatedAt time.Time
 }
