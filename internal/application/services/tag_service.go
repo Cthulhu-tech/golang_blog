@@ -57,7 +57,7 @@ func (s *tagService) GetAllTags() ([]query.TagQueryListResult, error) {
 
 	for _, tag := range tagList {
 		queryListResult = append(queryListResult, query.TagQueryListResult{
-			Result: []*common.TagResult{mapper.NewTagResultFromEntity(&tag)},
+			Result: []*common.TagResult{mapper.NewTagResultFromEntity(tag)},
 		})
 	}
 

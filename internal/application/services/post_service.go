@@ -25,18 +25,14 @@ func NewPostService(postRepo interfaces.PostRepository, tagRepo interfaces.TagRe
 }
 
 func (s *postService) CreatePost(title, content string, categoryID uint, tagIDs []string) (*entities.Post, error) {
-	var tags []entities.Tag
-	if len(tagIDs) > 0 {
-		err := s.tagRepo.GetTagsByIDs(tagIDs, &tags)
-		if err != nil {
-			return nil, err
-		}
+	tags, err := s.tagRepo.GetTagsByIDs(tagIDs)
+	if err != nil {
+		return nil, err
 	}
 
 	post := entities.NewPost(title, content, categoryID, tags)
 
-	err := s.postRepo.Create(post)
-	if err != nil {
+	if err := s.postRepo.Create(post); err != nil {
 		return nil, err
 	}
 
@@ -70,7 +66,7 @@ func (s *postService) GetAllPosts(page, pageSize int) ([]query.PostyQueryListRes
 
 	for _, post := range postList {
 		queryListResult = append(queryListResult, query.PostyQueryListResult{
-			Result: []*common.PostResult{mapper.NewPostResultFromEntity(&post, totalRecords)},
+			Result: []*common.PostResult{mapper.NewPostResultFromEntity(post, totalRecords)},
 		})
 	}
 
