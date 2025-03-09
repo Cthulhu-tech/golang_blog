@@ -1,4 +1,4 @@
-package interfaces
+package domain_interfaces
 
 import "github.com/Cthulhu-tech/golang_blog/internal/domain/entities"
 
