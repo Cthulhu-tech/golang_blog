@@ -2,7 +2,7 @@ package controller_response_mapper
 
 import (
 	"github.com/Cthulhu-tech/golang_blog/internal/application/common"
-	controller_response "github.com/Cthulhu-tech/golang_blog/internal/interface/api/rest/dto/dto/response"
+	controller_response "github.com/Cthulhu-tech/golang_blog/internal/interface/api/rest/dto/response"
 )
 
 func ToCategoryResponse(category *common.CategoryResult) *controller_response.CategoryResponse {

@@ -1,4 +1,4 @@
-package controler_response
+package controller_response
 
 import "time"
 

@@ -6,6 +6,7 @@ import (
 	app_interfaces "github.com/Cthulhu-tech/golang_blog/internal/application/interface"
 	domain_interfaces "github.com/Cthulhu-tech/golang_blog/internal/domain/interface"
 	controller_response_mapper "github.com/Cthulhu-tech/golang_blog/internal/interface/api/rest/dto/mapper"
+	"github.com/Cthulhu-tech/golang_blog/internal/interface/api/rest/dto/request"
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -20,73 +21,79 @@ func NewCategoryController(e *echo.Echo, service domain_interfaces.CategoryRepos
 		service: service,
 	}
 
-	e.POST("/api/v1/products", controller.service.CreateCategory)
-	e.GET("/api/v1/products", controller.service.GetAllCategories)
-	e.GET("/api/v1/products/:id", controller.service.GetCategoryByID)
+	e.POST("/api/v1/category", controller.CreateCategory)
+	e.GET("/api/v1/category", controller.GetAllCategories)
+	e.GET("/api/v1/category/:id", controller.GetCategoryByID)
 	e.Use(middleware.Recover())
 
 	return controller
 }
 
-// func (cc *CategoryController) CreateCategoryController(c echo.Context) error {
-// 	var createCategoryRequest request.CreateProductRequest
+func (cc *CategoryController) CreateCategory(c echo.Context) error {
+	var createCategoryRequest request.CreateCategoryRequest
 
-// 	if err := c.Bind(&createProductRequest); err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]string{
-// 			"error": "Failed to parse request body",
-// 		})
-// 	}
+	if err := c.Bind(&createCategoryRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Failed to parse request body",
+		})
+	}
 
-// 	productCommand, err := createCategoryRequest.ToCreateProductCommand()
-// 	if err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]string{
-// 			"error": "Invalid product Id format",
-// 		})
-// 	}
+	categoryCommand, err := createCategoryRequest.ToCreateCategoryCommand()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid category Id format",
+		})
+	}
 
-// 	result, err := cc.service.CreateCategory(productCommand)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{
-// 			"error": "Failed to create product",
-// 		})
-// 	}
+	result, err := cc.service.CreateCategory(categoryCommand)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to create category",
+		})
+	}
 
-// 	response := db_mapper.ToProductResponse(result.Result)
+	response := controller_response_mapper.ToCategoryResponse(result.Result)
 
-// 	return c.JSON(http.StatusCreated, response)
-// }
+	return c.JSON(http.StatusCreated, response)
+}
 
-// func (cc *CategoryController) GetAllCategoriesController(c echo.Context) error {
-// 	products, err := cc.service.GetAllCategories(1, 25)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{
-// 			"error": "Failed to fetch products",
-// 		})
-// 	}
+func (cc *CategoryController) GetAllCategories(c echo.Context) error {
+	categories, err := cc.service.GetAllCategories(1, 25)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to fetch Categories",
+		})
+	}
 
-// 	response := controller_response_mapper.ToCategoryResponse(products.Result)
+	if categories == nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "Categories not found",
+		})
+	}
 
-// 	return c.JSON(http.StatusOK, response)
-// }
+	response := controller_response_mapper.ToCategoryListResponse(categories.Result)
 
-func (cc *CategoryController) GetCategoryByIdController(c echo.Context) error {
+	return c.JSON(http.StatusOK, response)
+}
+
+func (cc *CategoryController) GetCategoryByID(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Invalid product Id format",
+			"error": "Invalid category Id format",
 		})
 	}
 
 	product, err := cc.service.GetCategoryByID(id.String())
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": "Failed to fetch product",
+			"error": "Failed to fetch category",
 		})
 	}
 
 	if product == nil {
 		return c.JSON(http.StatusNotFound, map[string]string{
-			"error": "Product not found",
+			"error": "Category not found",
 		})
 	}
 
