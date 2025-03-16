@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	app_interfaces "github.com/Cthulhu-tech/golang_blog/internal/application/interface"
-	domain_interfaces "github.com/Cthulhu-tech/golang_blog/internal/domain/interface"
 	controller_response_mapper "github.com/Cthulhu-tech/golang_blog/internal/interface/api/rest/dto/mapper"
 	"github.com/Cthulhu-tech/golang_blog/internal/interface/api/rest/dto/request"
 	"github.com/google/uuid"
@@ -16,7 +15,7 @@ type CategoryController struct {
 	service app_interfaces.CategoryService
 }
 
-func NewCategoryController(e *echo.Echo, service domain_interfaces.CategoryRepository) *CategoryController {
+func NewCategoryController(e *echo.Echo, service app_interfaces.CategoryService) *CategoryController {
 	controller := &CategoryController{
 		service: service,
 	}

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -22,25 +23,42 @@ func InitLogger() {
 		Logger.SetOutput(file)
 	} else {
 		Logger.SetOutput(os.Stdout)
+		Logger.Warn("Не удалось открыть файл логов, используется stdout")
 	}
 }
 
 func LogInfo(message string) {
+	if Logger == nil {
+		fmt.Println("Сообщение:", message)
+		return
+	}
 	Logger.Info(message)
 }
 
 func LogError(err error) {
+	if Logger == nil {
+		fmt.Println("Logger не инициализирован! Ошибка:", err)
+		return
+	}
 	Logger.WithFields(logrus.Fields{
 		"error": err,
 	}).Error("An error occurred")
 }
 
 func LogFatal(err error) {
+	if Logger == nil {
+		fmt.Println("Logger не инициализирован! Критическая ошибка:", err)
+		os.Exit(1)
+	}
 	Logger.WithFields(logrus.Fields{
 		"error": err,
 	}).Fatal("Critical error")
 }
 
 func LogDebug(message string) {
+	if Logger == nil {
+		fmt.Println("Logger не инициализирован! Debug:", message)
+		return
+	}
 	Logger.Debug(message)
 }
