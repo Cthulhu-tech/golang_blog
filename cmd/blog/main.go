@@ -22,7 +22,8 @@ func main() {
 	gormDB, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 
 	gormDB.AutoMigrate(&controller_response.Category{})
-
+	gormDB.AutoMigrate(&controller_response.Tag{})
+	gormDB.AutoMigrate(&controller_response.Post{})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
