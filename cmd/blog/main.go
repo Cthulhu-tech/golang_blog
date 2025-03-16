@@ -5,9 +5,9 @@ import (
 	"log"
 
 	"github.com/Cthulhu-tech/golang_blog/internal/application/services"
+	postgres_migrate_data "github.com/Cthulhu-tech/golang_blog/internal/infrastructure/db/postgresql"
 	"github.com/Cthulhu-tech/golang_blog/internal/infrastructure/db/postgresql/repository"
 	rest "github.com/Cthulhu-tech/golang_blog/internal/interface/api/rest/dto"
-	controller_response "github.com/Cthulhu-tech/golang_blog/internal/interface/api/rest/dto/response"
 	"github.com/Cthulhu-tech/golang_blog/internal/utils"
 	"github.com/labstack/echo"
 	"gorm.io/driver/postgres"
@@ -21,9 +21,9 @@ func main() {
 	server := "localhost:8080"
 	gormDB, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 
-	gormDB.AutoMigrate(&controller_response.Category{})
-	gormDB.AutoMigrate(&controller_response.Tag{})
-	gormDB.AutoMigrate(&controller_response.Post{})
+	gormDB.AutoMigrate(&postgres_migrate_data.Category{})
+	gormDB.AutoMigrate(&postgres_migrate_data.Tag{})
+	gormDB.AutoMigrate(&postgres_migrate_data.Post{})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}

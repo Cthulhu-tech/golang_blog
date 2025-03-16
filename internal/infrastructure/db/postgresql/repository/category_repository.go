@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/Cthulhu-tech/golang_blog/internal/domain/entities"
 	interfaces "github.com/Cthulhu-tech/golang_blog/internal/domain/interface"
 	postgres "github.com/Cthulhu-tech/golang_blog/internal/infrastructure/db/postgresql"
@@ -47,12 +49,13 @@ func (repo *GormCategoryRepository) GetAll(page, pageSize int) ([]*entities.Cate
 		return nil, 0, err
 	}
 
-	if err := repo.db.Limit(pageSize).Offset(page * pageSize).Find(&dbCategories).Error; err != nil {
-		return nil, 0, nil
+	if err := repo.db.Debug().Limit(pageSize).Offset((page - 1) * pageSize).Find(&dbCategories).Error; err != nil {
+		return nil, 0, err
 	}
 
 	category := make([]*entities.Category, len(dbCategories))
 	for i, dbCategory := range dbCategories {
+		fmt.Printf("Category from DB: %#v\n", dbCategory)
 		category[i] = db_mapper.FromDBCategory(&dbCategory)
 	}
 

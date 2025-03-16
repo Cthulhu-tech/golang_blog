@@ -7,7 +7,7 @@ type Post struct {
 	Title      string
 	Content    string
 	CategoryID uint
-	Tags       []*Tag `gorm:"many2many:post_tags;"`
+	Tags       []*Tag
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
