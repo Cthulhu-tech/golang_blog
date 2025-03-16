@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 
+	"github.com/Cthulhu-tech/golang_blog/internal/application/command"
 	"github.com/Cthulhu-tech/golang_blog/internal/application/common"
 	app_interfaces "github.com/Cthulhu-tech/golang_blog/internal/application/interface"
 	"github.com/Cthulhu-tech/golang_blog/internal/application/mapper"
@@ -20,15 +21,19 @@ func NewCategoryService(categoryRepo interfaces.CategoryRepository) app_interfac
 	return &categoryService{categoryRepo}
 }
 
-func (s *categoryService) CreateCategory(name string) (*entities.Category, error) {
-	category := entities.NewCategory(name)
+func (s *categoryService) CreateCategory(categoryCommand *command.CreateCategoryCommand) (*command.CreateCategoryCommandResult, error) {
+	category := entities.NewCategory(categoryCommand)
 
 	err := s.categoryRepo.Create(category)
 	if err != nil {
 		return nil, err
 	}
 
-	return category, nil
+	result := command.CreateCategoryCommandResult{
+		Result: mapper.NewProductResultFromValidatedEntity(category),
+	}
+
+	return &result, nil
 }
 
 func (s *categoryService) GetCategoryByID(id string) (*query.CategoryQueryResult, error) {
@@ -46,20 +51,20 @@ func (s *categoryService) GetCategoryByID(id string) (*query.CategoryQueryResult
 	return queryResult, nil
 }
 
-func (s *categoryService) GetAllCategories(page, pageSize int) ([]query.CategoryQueryListResult, error) {
+func (s *categoryService) GetAllCategories(page, pageSize int) (*query.CategoryQueryListResult, error) {
 	utils.LogInfo(fmt.Sprintf("Get all categories with page: %d and pageSize: %d", page, pageSize))
 	categoryList, totalRecords, err := s.categoryRepo.GetAll(page, pageSize)
 	if err != nil {
 		return nil, err
 	}
 
-	var queryListResult []query.CategoryQueryListResult
+	var categoryResults []*common.CategoryResult
 
 	for _, category := range categoryList {
-		queryListResult = append(queryListResult, query.CategoryQueryListResult{
-			Result: []*common.CategoryResult{mapper.NewCategoryResultFromEntity(category, totalRecords)},
-		})
+		categoryResults = append(categoryResults, mapper.NewCategoryResultFromEntity(category, totalRecords))
 	}
 
-	return queryListResult, nil
+	return &query.CategoryQueryListResult{
+		Result: categoryResults,
+	}, nil
 }
